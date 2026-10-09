@@ -1,0 +1,20 @@
+{
+  "name": "seobot",
+  "version": "1.0.0",
+  "description": "SEO assistant: audits the site, reads Search Console, plans and drafts useful posts, publishes after approval",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "audit": "node --no-warnings scripts/run.js audit",
+    "plan": "node --no-warnings scripts/run.js plan",
+    "write": "node --no-warnings scripts/run.js write",
+    "test": "node --no-warnings --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

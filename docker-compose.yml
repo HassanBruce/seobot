@@ -1,0 +1,14 @@
+services:
+  seo:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+      - ./secrets:/app/secrets:ro
+      # folder mode: mount your site's blog content folder (git repo) here, e.g.
+      # - /root/toolswhisper:/site
+    ports:
+      - "127.0.0.1:3400:3400"

@@ -1,0 +1,10 @@
+[
+  {"name": "ToolsWhisper", "url": "https://toolswhisper.io", "gsc": "sc-domain:toolswhisper.io",
+   "notes": "Free online tools (developer, text, image, SEO tools) with a blog. Next.js."},
+  {"name": "WeDial", "url": "https://wedial.pro", "gsc": "sc-domain:wedial.pro",
+   "notes": "Guides about calling, VoIP, phone numbers and dialing codes, topic hubs. Static Next.js export."},
+  {"name": "HeritageNest", "url": "https://heritagenest.space", "gsc": "sc-domain:heritagenest.space",
+   "notes": "Ancient and UNESCO heritage sites atlas, countries, eras, blog and history tools. Laravel."},
+  {"name": "HighQ Prompts", "url": "https://highqprompts.com", "gsc": "sc-domain:highqprompts.com",
+   "notes": "AI prompts library, free AI courses (n8n, AWS) with video notes, glossary, blog, free tools. Next.js."}
+]

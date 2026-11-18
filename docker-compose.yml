@@ -1,14 +1,16 @@
+# Runs once and exits. The server's cron starts it every morning:
+#   docker compose run --rm seobot
+name: seobot
 services:
-  seo:
+  seobot:
     build: .
-    restart: unless-stopped
     env_file: .env
     environment:
       DATA_DIR: /app/data
+      GSC_KEY_FILE: /app/secrets/gsc.json
+      TUBEBOT_DB: /tubebot/tubebot.db
     volumes:
       - ./data:/app/data
-      - ./secrets:/app/secrets:ro
-      # folder mode: mount your site's blog content folder (git repo) here, e.g.
-      # - /root/toolswhisper:/site
-    ports:
-      - "127.0.0.1:3400:3400"
+      - ../secrets:/app/secrets:ro
+      - ./sites.json:/app/sites.json:ro
+      - /var/www/tubebot/src/data:/tubebot:ro

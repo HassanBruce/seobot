@@ -45,7 +45,9 @@ def sitemap_urls(sess, base):
             root = ElementTree.fromstring(sess.get(sm, timeout=30).content)
         except (requests.RequestException, ElementTree.ParseError):
             continue
-        locs = [e.text.strip() for e in root.iter() if e.tag.endswith("loc") and e.text]
+        # Only <url><loc> / <sitemap><loc>: image:loc and video entries are files, not pages.
+        locs = [c.text.strip() for e in root if e.tag.split("}")[-1] in ("url", "sitemap")
+                for c in e if c.tag.split("}")[-1] == "loc" and c.text]
         if root.tag.endswith("sitemapindex"):
             todo += locs
         else:

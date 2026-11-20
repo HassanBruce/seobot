@@ -83,6 +83,8 @@ def site_section(s):
         h.append(f'<p style="font-size:13px">Google index check today: {len(p["inspected"]) - len(bad)} of {len(p["inspected"])} sampled pages are indexed.</p>')
         if bad:
             h.append(_table(["Not indexed", "Google says"], [[f'<a href="{E(i["url"])}">{_short(i["url"], base)}</a>', E(i["coverage"])] for i in bad[:12]]))
+    if p and p.get("inspect_failed"):
+        h.append(f'<p style="font-size:12px;color:#666">{len(p["inspect_failed"])} page(s) could not be checked today because Google\'s inspection API was slow. This is not a site problem; they are retried on a later day.</p>')
     if p and p.get("no_impressions"):
         h.append(f'<p style="font-size:13px">{len(p["no_impressions"])} sitemap pages got zero impressions in 28 days.</p>')
     if p and p.get("striking"):

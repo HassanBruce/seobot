@@ -14,6 +14,9 @@ from bs4 import BeautifulSoup
 
 from . import config
 
+# Legal, contact and listing pages are short by nature; Google does not rank them for content.
+UTILITY = re.compile(r"/(contact|terms|privacy|affiliate-disclosure|disclaimer|cookies?|verify|search)(-[a-z-]+)?/?$"
+                     r"|/page/\d+/?$|/(blog|journal)/(tag|topic)/[^/]+/?$|^/(blog|topics|guides|tools|notes|countries|ancient-sites-near)/?$", re.I)
 SKIP_EXT = re.compile(r"\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|mp4|mp3|css|js|xml|txt|json|woff2?)$", re.I)
 
 
@@ -105,7 +108,7 @@ def _check_page(sess, url, host):
         add("error", "canonical", f"canonical points to another URL: {canon}")
     if len(h1) != 1:
         add("warn", "h1", f"{len(h1)} <h1> tags (should be 1)")
-    if words < 250:
+    if words < 250 and not UTILITY.search(urlparse(url).path):
         add("warn", "thin", f"thin content ({words} words)")
     if r["ms"] > 2500:
         add("warn", "speed", f"slow response ({r['ms']} ms)")
@@ -153,7 +156,7 @@ def run(site):
     except requests.RequestException:
         pass
     for p in ("/privacy", "/about", "/contact"):
-        if not any(urlparse(u).path.rstrip("/").endswith(p) for u in urls):
+        if not any(p in urlparse(u).path.rstrip("/") for u in urls):    # also /privacy-policy, /contact-us
             site_issues.append(("info", "pages", f"no {p} page in the sitemap (AdSense reviewers look for it)"))
 
     pages_to_check = urls[: config.MAX_PAGES]

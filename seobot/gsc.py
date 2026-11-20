@@ -1,4 +1,5 @@
 """Google Search Console: performance, opportunities, sitemaps and index status (read-only service account)."""
+import time
 from datetime import date, timedelta
 
 from . import config
@@ -59,12 +60,20 @@ def performance(prop, sitemap_urls=(), inspect_urls=()):
         out["sitemaps_error"] = str(e)[:200]
 
     out["inspected"] = []
+    out["inspect_failed"] = []
     for u in inspect_urls:
-        try:
-            r = svc.urlInspection().index().inspect(body={"inspectionUrl": u, "siteUrl": prop}).execute()
-            ir = r.get("inspectionResult", {}).get("indexStatusResult", {})
-            out["inspected"].append({"url": u, "verdict": ir.get("verdict"), "coverage": ir.get("coverageState", ""),
-                                     "last_crawl": ir.get("lastCrawlTime", ""), "canonical": ir.get("googleCanonical", "")})
-        except Exception as e:
-            out["inspected"].append({"url": u, "verdict": "ERROR", "coverage": str(e)[:120]})
+        for attempt in range(3):
+            try:
+                r = svc.urlInspection().index().inspect(body={"inspectionUrl": u, "siteUrl": prop}).execute(num_retries=2)
+                ir = r.get("inspectionResult", {}).get("indexStatusResult", {})
+                out["inspected"].append({"url": u, "verdict": ir.get("verdict"), "coverage": ir.get("coverageState", ""),
+                                         "last_crawl": ir.get("lastCrawlTime", ""), "canonical": ir.get("googleCanonical", "")})
+                break
+            except Exception as e:
+                # A timeout here is the Search Console API being slow, not the site: retry, then report it apart
+                # from real "not indexed" answers.
+                if attempt == 2:
+                    out["inspect_failed"].append({"url": u, "error": str(e)[:120]})
+                else:
+                    time.sleep(5 * (attempt + 1))
     return out
